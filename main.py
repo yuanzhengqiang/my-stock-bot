@@ -46,6 +46,7 @@ results = []
 # 2. 遍历扫描
 for code in all_codes:
     try:
+        time.sleep(0.2)
         # 获取历史行情 (获取最近80天数据足够计算指标)
         df = ak.stock_zh_a_hist(symbol=code, period="daily", adjust="qfq")
         if df.empty: continue

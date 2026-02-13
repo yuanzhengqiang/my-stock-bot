@@ -1,24 +1,31 @@
-name: Daily Stock Scan
-
+name: StockBot
 on:
   schedule:
-    - cron: '0 0 * * *' # 每天北京时间早上8点运行 (UTC 0:00)
-  workflow_dispatch: # 允许手动点运行
+    - cron: '0 8 * * *' # 北京时间下午4点跑 (UTC 8:00)
+  workflow_dispatch:
+
+permissions:
+  issues: write # 允许机器人发 Issue
 
 jobs:
-  build:
+  run_job:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
+      - name: Checkout
         uses: actions/checkout@v3
-
-      - name: Setup Python
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
-
-      - name: Install Dependencies
-        run: pip install -r requirements.txt
-
-      - name: Run Script
-        run: python main.py
+      - name: Install
+        run: pip install akshare pandas pandas-ta
+      - name: Run Scan
+        run: |
+          # 运行脚本并将输出保存到文件
+          python main.py > result.txt
+          cat result.txt
+      - name: Create Issue
+        uses: peter-evans/create-issue-from-file@v4
+        with:
+          title: Daily Stock Report - ${{ github.date }}
+          content-filepath: ./result.txt

@@ -6,33 +6,32 @@ on:
 
 permissions:
   issues: write
+  contents: write
 
 jobs:
   run_job:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout Code
         uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10' # 升级到 3.10
-      - name: Check IP
-        run: curl ifconfig.me
-        
-      - name: Run Scan
-        run: |
-          python main.py > result.txt
-          cat result.txt
+          python-version: '3.10'
 
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
+          # 直接在这里安装，不依赖 requirements.txt，确保万无一失
           pip install akshare pandas
+
+      - name: Check IP (Debug)
+        run: curl ifconfig.me
 
       - name: Run Scan
         run: |
+          # 运行脚本并将结果保存
           python main.py > result.txt
           cat result.txt
 
